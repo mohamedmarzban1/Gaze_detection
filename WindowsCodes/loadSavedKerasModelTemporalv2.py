@@ -32,9 +32,13 @@ def TempEstForgetFactor(y_soft, beta = 0.95):
     #W_i = np.matlib.repmat(W_i, numClasses, 1 ).T
     y_soft_predicted = np.matmul(W_i,y_soft)/W_i_sum # predicted soft angle
     return y_soft_predicted
+
+#====== A function that takes the imageID as input and outputs the image count ========= #
+def getImageCount(ImageID):
+    TmpSplit = ImageID.split("_c")
+    return int(TmpSplit[1].split("_f")[0]) 
     
-    
-  #======= A function that takes the imageID and the index of the previous temporal image and returns the new ID
+ #======= A function that takes the imageID and the index of the previous temporal image and returns the new ID
 def getImageIDfromList(ImageID,ImageCount,i):
     if i == 0:
         return ImageID
@@ -66,8 +70,9 @@ def getImageID(ImageID, ImageCount, i):
 def MyPrepareDataTemporal(elligibleImageID, num_prev):
     X_Face, X_LEye, X_REye = [], [], [] 
     y_Elev, y_Azim = [], [], 
-    DataSetID, ImagePath, ImageID, ElevClass, AzimClass, Elev, Azim, ImageCount = elligibleImageID
-    ImageCount = int(ImageCount)
+    #DataSetID, ImagePath, ImageID, ElevClass, AzimClass, Elev, Azim, ImageCount = elligibleImageID
+    DataSetID, ImagePath, ImageID, ElevClass, AzimClass, Elev, Azim = elligibleImageID
+    ImageCount = getImageCount(elligibleImageID)
     X_Face, X_LEye, X_REye = [], [], [] 
     y_Elev, y_Azim = [], [], 
     ImageIDList = []

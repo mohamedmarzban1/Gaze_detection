@@ -8,11 +8,11 @@ import pandas as pd
 #######################################################
 #### Change Before Every New Run #######################
 ######################################################
-faceVideoPath = 'G:/Multi-sensors gaze Data Collection/Drive 2019-5-22/ContGaze/FcontGaze.mp4'
-contGazeOutputFilesLoc ='C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/D2019-5-22/ContGaze/'
-contGazeImagesLoc = 'G:/ContGazeImages/ContLabelledFace/2019-5-22'
-DataSetID = 'C2019May22Face'
-StartSec = 1 # start sec in the video (N.B. all previous frames should Not be counted)
+faceVideoPath = 'G:/Multi-sensors gaze Data Collection/Drive 2019-10-31/ContGaze/FContGaze.mp4'
+contGazeOutputFilesLoc ='C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/D2019-10-31/ContGaze/'
+contGazeImagesLoc = 'G:/ContGazeImages/ContLabelledFace/2019-10-31'
+DataSetID = 'C2019October31Face'
+StartSec = 0 # start sec in the video (N.B. all previous frames should Not be counted)
 vCropS = 80
 vCropE = 1000
 hCropS = 500

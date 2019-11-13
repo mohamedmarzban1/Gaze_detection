@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jul 18 11:50:57 2019
+Created on Fri Oct 25 15:56:27 2019
 
 @author: mfm160330
+
 
 1- Combine more than 1 ID file
 2- Convert Angles to labels
 3- N.B: the y-axis is flipped in this file
+4- Data separation
 
 """
 
@@ -23,31 +25,59 @@ def MyListCheck (MyList, label):
     return False
 
 
+#### ====== A fuctaion that determines whether this example, a trainning or test or validation
+def TrainOrValidate (i,n,ImageID,trainValidFlag,Sep):
+    if (i<n):
+        #fixedGaze
+        SplittedID = ImageID.split("-")
+        SplittedID.reverse()
+        frameNum = int(SplittedID[FrameIndexNumberRev])
+        if frameNum > Sep:
+            trainValidFlag = 1
+        
+    else:
+        #contGaze
+        SplittedID = ImageID.split("_f")[0]
+        frameNum = int(SplittedID.split("_c")[1])
+        if frameNum > (Sep + ContSeparationMargin):
+            trainValidFlag = 1
+        elif (frameNum > Sep and frameNum < (Sep + ContSeparationMargin)):
+            trainValidFlag = 100 # a buffer frame between trainning and validation should be unused
+    
+    return trainValidFlag
+
 #===== Intialize parameters ============#
 ### Fixed Gaze:
 ReadLocation1 =  "C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/FaceAndEyes" # "C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/ReCalibrationOutputs"
-Sub1 =  ["FE2018-12-1", "FE2018-12-3", "FE2019-5-22", "FE2019-5-30", "FE2019-6-11", "FE2019-6-14", "FE2019-7-9", "FE2019-7-10", "FE2019-7-11", "FE2019-7-15", "FE2019-7-23"]#["FE2019-7-10", "FE2019-7-11"] #["FE2018-12-1", "FE2018-12-3", "FE2019-5-22", "FE2019-5-30", "FE2019-6-11", "FE2019-6-14", "FE2019-7-9", "FE2019-7-15" , "FE2019-7-23"]  #["FE2019-7-10", "FE2019-7-11"] # ##input
+Sub1 =  ["FE2018-12-1", "FE2018-12-3", "FE2019-5-22", "FE2019-5-30", "FE2019-6-11", "FE2019-6-14", "FE2019-7-9", "FE2019-7-15", "FE2019-7-23", "FE2019-10-03", "FE2019-10-31"]
 idFile1 =   "AnglesIDfile.csv" # "fg/AnglesId_Fixed_Gaze_Calib.csv"
+FixedSeparation = [float('inf'), float('inf'), 13400, float('inf'), 24640, float('inf'), 15113, 18940, 17143, float('inf'), float('inf')]
+FrameIndexNumberRev = 3 #   In image name, after which dash is the frame number located (Reveresed image name)
+
 
 ###Cont Gaze:
 ReadLocation2 = "G:\ContGazeImages\FaceAndEyes"#"C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/ReCalibrationOutputs" #input
-Sub2 =  ["CFE2019-5-22", "CFE2019-5-30", "CFE2019-6-11", "CFE2019-6-14", "CFE2019-6-21", "CFE2019-7-9", "CFE2019-7-10", "CFE2019-7-11", "CFE2019-7-15", "CFE2019-7-19", "CFE2019-7-23"] #["CFE2019-7-10", "CFE2019-7-11"] #["CFE2019-5-22", "CFE2019-5-30", "CFE2019-6-11", "CFE2019-6-14", "CFE2019-6-21", "CFE2019-7-9", "CFE2019-7-15" , "CFE2019-7-19" , "CFE2019-7-23"] 
+Sub2 =  ["CFE2019-5-22", "CFE2019-5-30", "CFE2019-6-11", "CFE2019-6-14", "CFE2019-6-21", "CFE2019-7-9", "CFE2019-7-15", "CFE2019-7-19", "CFE2019-7-23", "CFE2019-8-27", "CFE2019-10-30", ] 
 idFile2 = "AnglesIDfile.csv"
+ContSeparation = [11095, float('inf'), 9685, 9826, float('inf'), 9747, float('inf'), 11400, 8900, float('inf'), float('inf')]
 
-DenseClassificationFile = "C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/ElevenAllRefBackX6.csv" #"C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/DenseNine.csv" #output
-#validAndTestFlag = 1
-#ValidFile = "C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/DenseNineValidV3.csv"
+OutputPath = "C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles"
+TrainningFile = OutputPath + "/" + "ElevenTrainX9.csv" #"C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/DenseNine.csv" #output
+ValidationFile = OutputPath + "/" + "/ElevenValidX9.csv" #"C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/DenseNine.csv" #output
+TwoMarkersTestFile = OutputPath + "/" + "/ElevenTwoMarkersTestX9.csv"
+ContSeparationMargin = 200 # need to keep this ContSeparationMargin frames unused between trainning and validation for continuous
+
 #===============================================#
-
-ContDownSample = 4 #downsample contgaze images by 4
-ExcludeLabels = []#["q- 3", "f- 5"] # exclude those markers from training
+FixedDownSample = 3 #downsample contgaze images by 4
+ContDownSample = 6 #downsample contgaze images by 4
+TestLabels = ["q- 3", "f- 5"] # exclude those markers from training
 
 # Dense classificiation Parameters:
 # Make sure (ElevEnd -Elevstart)/res is an integar 
-ElevStart = 76 # in degrees
+ElevStart = 74 # in degrees
 ElevEnd = 102 #in degrees
 AzimStart = -30 # in degrees
-AzimEnd = 50 # in degrees
+AzimEnd = 52 # in degrees
 res = 2 #Resolution of Elevation and Azimuth Angles classes in degrees
 #===================================#
 
@@ -57,28 +87,33 @@ numAzimClasses = (AzimEnd - AzimStart)/res + 2 + 1 # We added an extra elevation
 ElevSeparatorAngle = 120 # Angle that differentiates dashboard area from gear shifter area
 AzimSeparatorAngle = -40 # Angle that differentiates mirror area from side window area
 
-#====== Open a new Dense Classification file =========#
-csv_output = open(DenseClassificationFile, 'w+')
+#====== Open trainning, testing and validation files and write =========#
 header = "DataSetID\tImagePath\tImageID\tElevClass\tAzimClass\tElev\tAzim\n"
+csv_output = open(TrainningFile, 'w+')
 csv_output.write(header)
 
-#if validAndTestFlag:
-#    csv_output2 = open(ValidFile, 'w+')
-#    csv_output2.write(header)
+csv_output3 = open(ValidationFile, 'w+')
+csv_output3.write(header)
+
+csv_outputTest = open(TwoMarkersTestFile, 'w+')
+csv_outputTest.write(header)
 
 
 #==== Read and concatenate all ID files =========#
 dfAngles = pd.DataFrame()
 Sub1_idx = 0
 MinElevArray, MaxElevArray, MinAzimArray, MaxAzimArray = [], [], [], []
-#DataSetID, ImagePath, ImageID = [], [], []
-#ElevClass, AzimClass = [], []
+
 for i in range(len(Sub1) + len(Sub2)):
     if i < len(Sub1):
         InputIdFilePath = ReadLocation1+'/'+Sub1[i]+'/'+idFile1
         Sub1_idx = Sub1_idx + 1
+        Sep = FixedSeparation[i] #separation frame between trainning and validation
+        
     else:
         InputIdFilePath = ReadLocation2+'/'+Sub2[i-Sub1_idx]+'/'+idFile2
+        Sep = ContSeparation[i-Sub1_idx] #separation frame between trainning and validation
+
     
     dfInput = pd.read_csv(InputIdFilePath, sep='\t')
     #dfInput.index = range(dfInput.shape[0])
@@ -86,17 +121,20 @@ for i in range(len(Sub1) + len(Sub2)):
     #next(csvfile) #skip heading
     MyMinElev, MyMinAzim = float('inf'), float('inf')
     MyMaxElev, MyMaxAzim = -float('inf'), -float('inf')
+    
     for j in range(dfInput.shape[1]):
-        #if not ''.join(row).strip():
-        #    continue # ignore the blank lines
+        trainValidFlag = 0  #0: trainning example, 1:valid example
+        row = dfInput[j]
+        ImageID = str(row['ImageID'])
+        trainValidFlag = TrainOrValidate (i,len(Sub1),ImageID,trainValidFlag,Sep)
 
-        if (i < len(Sub1) or j % ContDownSample == 0):
+        if ((i < len(Sub1) and j % FixedDownSample == 0) or  (i >= len(Sub1) and j % ContDownSample == 0)):
+            
         
-            row = dfInput[j]
             label = str(row['labels'])
-            if MyListCheck (ExcludeLabels, label):
+            if MyListCheck (TestLabels, label):
                 # if the label is in exludelabels, continue the for loop without writing it
-                continue
+                trainValidFlag = 2
             
             DataSetID = str(row['DataSetID'])
             if i < len(Sub1):
@@ -139,17 +177,23 @@ for i in range(len(Sub1) + len(Sub2)):
             else:
                 AzimClass = np.ceil((Azim-AzimStart)/res)+1    
 
+            writtenRow = [DataSetID, ImagePath, ImageID, str(ElevClass), str(AzimClass), str(Elev), str(Azim)]
             if np.isnan(AzimClass):
                 #doNothing
                 print('---------nan value found--------------')
-#            elif (i == 2 and j <4000 and validAndTestFlag):
-#                with open(ValidFile, 'a+') as csv_output2:
-#                    filewriter2 = csv.writer(csv_output2, delimiter='\t', quotechar='|', quoting=csv.QUOTE_MINIMAL)            
-#                    filewriter2.writerow([DataSetID, ImagePath, ImageID, str(ElevClass), str(AzimClass), str(Elev), str(Azim)])             
-            else:
-                with open(DenseClassificationFile, 'a+') as csv_output:
+            elif trainValidFlag == 0:
+                with open(TrainningFile, 'a+') as csv_output:
                     filewriter = csv.writer(csv_output, delimiter='\t', quotechar='|', quoting=csv.QUOTE_MINIMAL)            
-                    filewriter.writerow([DataSetID, ImagePath, ImageID, str(ElevClass), str(AzimClass), str(Elev), str(Azim)])
+                    filewriter.writerow(writtenRow)        
+            elif trainValidFlag == 1:
+                with open(ValidationFile, 'a+') as csv_output3:
+                    filewriter3 = csv.writer(csv_output3, delimiter='\t', quotechar='|', quoting=csv.QUOTE_MINIMAL)            
+                    filewriter3.writerow(writtenRow)  
+            elif trainValidFlag == 2:
+                with open(TwoMarkersTestFile, 'a+') as csv_outputTest:
+                    filewriter3 = csv.writer(csv_outputTest, delimiter='\t', quotechar='|', quoting=csv.QUOTE_MINIMAL)            
+                    filewriter3.writerow(writtenRow)  
+             
 
     MinElevArray.append(MyMinElev)  
     MaxElevArray.append(MyMaxElev)

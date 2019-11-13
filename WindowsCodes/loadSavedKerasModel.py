@@ -91,18 +91,18 @@ def AccHigestN(y_truth, y_pred_soft,N):
             
 
 #### 
-SavedModel = 'mySavedModels/run15SimpleNetwork.h5'
-testDataSetFile = 'C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/DenseNineTestV3.csv'#DenseTest2019-5-30Fixed.csv'
+SavedModel = 'mySavedModels/x7run1.h5'
+testDataSetFile = 'C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/ElevenFixedNewMarkersTestX7.csv'#DenseTest2019-5-30Fixed.csv'
 
 FaceResize = 224
 EyeResize = 64
 MyBatchSize = 32
-NumUsedTest = 2000 # number of test samples
+#NumUsedTest = 2000 # number of test samples
 
 
 #==== Dense classificiation Parameters ======#
-numElevClasses = 14 #number of Elevation Angles classes, 1) theta<=-45 2) -45<theta<=-43 3) -43<theta<=-41 .... 47) 45<theta
-numAzimClasses = 38 #number of Azimuth Angles classes, 1) phi<=-90 2) -90<phi<=-88 3) -43<theta<=-41 .... 92) 90<phi
+numElevClasses = 16 #number of Elevation Angles classes, 1) theta<=-45 2) -45<theta<=-43 3) -43<theta<=-41 .... 47) 45<theta
+numAzimClasses = 43 #number of Azimuth Angles classes, 1) phi<=-90 2) -90<phi<=-88 3) -43<theta<=-41 .... 92) 90<phi
 softLabels = 1 #transform the hard labels into soft ones to penalize errors differently 
 IsEyes = 1
 

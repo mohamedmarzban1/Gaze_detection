@@ -22,18 +22,23 @@ ReadLocation1 = "C:/Users/mfm160330/OneDrive - The University of Texas at Dallas
 Sub1 = [] #["FE2018-12-3", "FE2018-12-1", "FE2019-5-22", "FE2019-5-30", "FE2019-6-11", "FE2019-6-14", "FE2019-7-11", "FE2019-7-15" , "FE2019-7-23"]
 ReadLocation2 = "C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/" #"G:/ContGazeImages/FaceAndEyes"
 Sub2 = ["OutputFiles"] #["CFE2019-5-22", "CFE2019-5-30", "CFE2019-6-11", "CFE2019-6-14", "CFE2019-6-21", "CFE2019-7-11", "CFE2019-7-15", "CFE2019-7-19", "CFE2019-7-23"]
-IdFileName = "AugmentedNineV3.csv" #"DenseNine.csv" #"AugmentedNineDownFour.csv"  # "AnglesIDfile.csv" #"AugmentedNine.csv" 
+IdFileName = "AugmentedElevenTrainX9.csv" #"DenseNine.csv" #"AugmentedNineDownFour.csv"  # "AnglesIDfile.csv" #"AugmentedNine.csv" 
+FolderName = "AugmentedElevenTrainX9"
 
-ParkingOrDriving = "All"
-date = "NineFixedNineCont"
+#ParkingOrDriving = "All"
+#date = "ElevenFixedAndCont"
 binwidth = 2
 binWidthClasses = 1
-numElevClasses = 14
-numAzimClasses = 38
+numElevClasses = 17#16#14
+numAzimClasses = 44#46#42#38
 
 #========================
 
 
+try:           
+    os.makedirs(FolderName)
+except OSError:  
+    print ("Creation of the directory %s failed" % FolderName)
 
 #==== Read and concatenate all ID files =========#
 dfAngles = pd.DataFrame()
@@ -69,10 +74,12 @@ ax1 = fig1.add_subplot(111)
 ElevBins = np.arange(-0.5,numElevClasses+0.5,binWidthClasses) #
 ElevHist = np.histogram(ElevClass, bins = ElevBins) #np.histogram(ElevDegrees, bins = ElevBins)
 plt.hist(ElevClass, bins= ElevBins)
+ax1.grid()
 plt.xlabel('class number')
 plt.ylabel('counts')
 plt.title('Elevation classes Histogram')
-plt.savefig('Elevation classes Histogram'+".png", dpi = 96)
+plt.savefig(FolderName+'/Elevation classes Histogram'+".png", dpi = 96)
+
 
 #histogram for Azimuth classes
 AzimBins = np.arange(-0.5, numAzimClasses + 0.5,binWidthClasses)  #AzimBins = np.arange(-64,72,binwidth)
@@ -80,32 +87,35 @@ AzimHist = np.histogram(AzimClass, bins = AzimBins) #np.histogram(AzimDegrees, b
 fig2 = plt.figure()
 ax2 = fig2.add_subplot(111)
 plt.hist(AzimClass, bins= AzimBins)
+ax2.grid()
 plt.xlabel('class number')
 plt.ylabel('counts')
 plt.title('Azimuth classes histogram')
-fig2.savefig('Azimuth classes Histogram'+".png", dpi = 96)
+fig2.savefig(FolderName+'/Azimuth classes Histogram'+".png", dpi = 96)
 
 # histogram for Elevation Angles
-ElevBinsAngles = np.arange(70,142,binwidth)
+ElevBinsAngles = np.arange(70,140,binwidth)
 ElevHistAngles = np.histogram(ElevDegrees, bins = ElevBinsAngles)
 figxx = plt.figure()
 axXX = figxx.add_subplot(111)
+axXX.grid()
 plt.hist(ElevDegrees, bins = ElevBinsAngles)
 plt.xlabel('Angles (in degrees)')
 plt.ylabel('counts')
 plt.title('Elevation angles histogram')
-figxx.savefig('Elevation angles histogram'+".png", dpi = 96)
+figxx.savefig(FolderName+'/Elevation angles histogram'+".png", dpi = 96)
 
 #histogram for Azimuth angles
-AzimBinsAngles = np.arange(-64,72,binwidth)
+AzimBinsAngles = np.arange(-80,70,binwidth)
 AzimHistAngles = np.histogram(AzimDegrees, bins = AzimBinsAngles)
 figx = plt.figure()
 axX = figx.add_subplot(111)
+axX.grid()
 plt.hist(AzimDegrees, bins=AzimBinsAngles)
 plt.xlabel('Angles (in degrees)')
 plt.ylabel('counts')
 plt.title('Azimuth angles histogram')
-figx.savefig('Azimuth angles histogram Downsampled'+".png", dpi=96)
+figx.savefig(FolderName+'/Azimuth angles histogram Downsampled'+".png", dpi=96)
 
 
 
@@ -133,7 +143,7 @@ plt.ylabel('Azimuth Angle (in degrees)')
 #plt.zlabel('counts')
 plt.show()
 plt.draw()
-fig3.savefig("Joint Angles DownSampled"+".png", dpi= 96)
+fig3.savefig(FolderName+"/Joint Angles DownSampled"+".png", dpi= 96)
 #================================================================#
 
 
@@ -161,7 +171,7 @@ plt.ylabel('Azimuth class number')
 ax4.bar3d(xpos4, ypos4, zpos4, dx4, dy4, dz4, zsort='average')
 plt.show()
 plt.draw()
-fig4.savefig("Joint Classes Downsampled"+".png", dpi=96)
+fig4.savefig(FolderName+"/Joint Classes Downsampled"+".png", dpi=96)
 
 
 

@@ -84,9 +84,9 @@ def AugmentData(row, num, br_add, br_scale, sat_add, sat_scale):
     return 
 
 ###========== Intialize parameters ==============###
-InputFile = "C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/DenseNineV3Exclude2Labels.csv" ##input
-NewAugmentedFile = "C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/AugmentedNineV3.csv" ##output
-AugmentedDataLoc = "G:/AugmnetedHSVv3/"
+InputFile = "C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/ElevenTrainX9.csv" ##input
+NewAugmentedFile = "C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/AugmentedElevenTrainX9.csv" ##output
+AugmentedDataLoc = "G:/AugmnetedHSVx9/"
 brightness_additive_max = 10
 brightness_scale_max = 0.05
 sat_add_max = 10
@@ -127,13 +127,15 @@ for indx in range(numRowsInput):
     Azim = float(row['Azim'])
     ElevClass = int(row['ElevClass'])
     AzimClass = int(row['AzimClass'])
-    if ElevClass == 0:
+    if  AzimClass== 42:
         num = 8
-    elif ElevClass == 1:
-        num = 5
-    elif ElevClass == 2 or ElevClass == 12:
+    elif MyListCheck ([14,16], ElevClass):
+        num = 6
+    elif MyListCheck ([35,36,40,41], AzimClass):
+        num = 4
+    elif ElevClass == 13:
         num = 3
-    elif ElevClass == 11 or MyListCheck ([2,3,5,6,7,8,33,34,35,36,37], AzimClass):
+    elif MyListCheck ([1,12,15], ElevClass) or MyListCheck ([0,1,2,3,4,37,38,39], AzimClass):
         num = 1
     #num = AugmentTimes[ElevClass]
     

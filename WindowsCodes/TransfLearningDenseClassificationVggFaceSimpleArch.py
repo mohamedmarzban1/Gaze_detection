@@ -221,10 +221,10 @@ class ExtraLogInfo(Callback):
 #Categories = ["a- 4", "b- 1", "c- 8", "d- 2", "e- 13", "f- 5", "g- 9", "h- 11", "i- 6", "j- 20", "k- 19", "l- 18", "m- 21", "n- 17", "o- 16", "p- 14", "q- 3", "r- 7", "s- 10", "t- 12" ,"u- 15" ] 
 
 #======= File Pathes intializations =======#
-TrainIdFile = 'C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/DenseValCont2019-7-10.csv'#AugmentedNineV3.csv'
-ValIdFile = 'C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/3.csv'#DenseNineValidV3.csv'
-TestIdFile = 'C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/1.csv'#DenseNineTestV3.csv'
-CheckpointFilePath = 'mySavedModels/BestWeightsTest.h5' 
+TrainIdFile = 'C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/AugmentedElevenTrainX9.csv'#AugmentedNineV3.csv'
+ValIdFile = 'C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/ElevenValidX9.csv'#DenseNineValidV3.csv'
+TestIdFile = 'C:/Users/mfm160330/OneDrive - The University of Texas at Dallas/ADAS data/OutputFiles/ElevenTwoMarkersTestX9.csv'#DenseNineTestV3.csv'
+CheckpointFilePath = 'mySavedModels/x9run1.h5' 
 checkPeriod = 1 #Period of saving weights
 ###======================================###
 
@@ -232,16 +232,16 @@ FaceResize = 224
 EyeResize = 64
 
 #==== Dense classificiation Parameters ======#
-numElevClasses = 14 #number of Elevation Angles classes, 1) theta<=-45 2) -45<theta<=-43 3) -43<theta<=-41 .... 47) 45<theta
-numAzimClasses = 38 #number of Azimuth Angles classes, 1) phi<=-90 2) -90<phi<=-88 3) -43<theta<=-41 .... 92) 90<phi
+numElevClasses = 17 #number of Elevation Angles classes, 1) theta<=-45 2) -45<theta<=-43 3) -43<theta<=-41 .... 47) 45<theta
+numAzimClasses = 44 #number of Azimuth Angles classes, 1) phi<=-90 2) -90<phi<=-88 3) -43<theta<=-41 .... 92) 90<phi
 softLabels = 1 #transform the hard labels into soft ones to penalize errors differently 
 IsEyes = 1
 #===== Training Intializations =======#
-Epochs = 7 
+Epochs = 20 
 LayersToFreeze_F = 25   #N.B: VGGface without the top includes 31 layers
 LayersToFreeze_E = 18  
 MyBatchSize = 32 
-ValSize = 20#1500
+ValSize = 1630
 lRate = 0.001
 #====== read Train, Validataion and test ID file amd Shuffle them =========#
 TrainIDs = readIDfile(TrainIdFile)
@@ -324,7 +324,7 @@ ExtraLogInfoObject = ExtraLogInfo()
 checkpoint = ModelCheckpoint(CheckpointFilePath, monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False, mode='max', period=checkPeriod)
 #checkpoint = ModelCheckpoint(CheckpointFilePath, save_best_only=True, monitor='val_acc', save_weights_only=False, mode='max', period=checkPeriod)
 
-StepsPerEpoch = np.ceil(samples_per_epoch/MyBatchSize)
+StepsPerEpoch = np.floor(samples_per_epoch/MyBatchSize) #np.ceil(samples_per_epoch/MyBatchSize)
 
 model_final.fit_generator( train_datagen, steps_per_epoch = StepsPerEpoch, epochs = Epochs,  verbose=1, validation_data = Val_generator, nb_val_samples = ValSize, callbacks= [ExtraLogInfoObject, checkpoint])
 
